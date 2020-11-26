@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>image classifier</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            text-align: center;
+        }
+
+        #img {
+            max-width: 600px;
+            margin: 50px 0;
+        }
+
+        .form input {
+            height: 30px;
+        }
+
+        .form button {
+            height: 36px;
+            padding: 0 10px;
+            border: none;
+            background: grey;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar text-light indigo navbar-expand-lg navbar-dark">
+        Image Classifier
+    </nav>
+    <div class="container my-5 z-depth-1">
+
+
+        <!--Section: Content-->
+        <section class="dark-grey-text p-5">
+
+            <!-- Grid row -->
+            <div class="row">
+
+                <!-- Grid column -->
+                <div class="col-md-5 mb-4 mb-md-0">
+
+                    <div class="view">
+                        <img class="img-fluid" id="img" crossorigin="anonymous"></img>
+                    </div>
+
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-7 mb-lg-0 mb-4">
+
+                    <!-- Form -->
+
+
+                    <!-- Section heading -->
+                    <h4 class="font-weight-bold my-3">Enter Image Url and predict the Object!</h4>
+
+                    <!-- <p class="text-muted mb-4 pb-2" id="prediction"></p> -->
+                    <div class="alert alert-primary" role="alert" id="prediction">
+                        prediction will be here!
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Enter your Image URL"
+                            aria-label="Enter your email address" aria-describedby="button-addon2" id="image_url">
+                        <div class="input-group-append">
+                            <button
+                                class="btn btn-md indigo text-light rounded-right m-0 px-3 py-2 z-depth-0 waves-effect"
+                                id="submit_button">Predict!</button>
+                        </div>
+                    </div>
+
+
+                    <!-- Form -->
+
+                </div>
+                <!-- Grid column -->
+
+            </div>
+            <!-- Grid row -->
+
+        </section>
+        <!--Section: Content-->
+
+
+    </div>
+
+
+    <!-- Load TensorFlow.js. This is required to use MobileNet. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.1"> </script>
+    <!-- Load the MobileNet model. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"> </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+
+    <script>
+        const img = document.getElementById('img');
+        const button = document.getElementById('submit_button');
+        const input = document.getElementById('image_url');
+        const result = document.getElementById('prediction');
+
+        let model;
+
+        button.onclick = () => {
+            const url = input.value;
+            img.src = url;
+            result.innerText = "Loading...";
+        }
+
+        img.onload = () => {
+            doPrediction();
+        }
+
+        function doPrediction() {
+            if (model) {
+                model.classify(img).then(predictions => {
+                    showPrediction(predictions);
+                });
+            } else {
+                mobilenet.load().then(_model => {
+                    model = _model;
+                    model.classify(img).then(predictions => {
+                        showPrediction(predictions);
+                    });
+                });
+            }
+        }
+
+        function showPrediction(predictions) {
+            result.innerText = "This might be a " + predictions[0].className;
+        }
+    </script>
+</body>
+
+</html>
